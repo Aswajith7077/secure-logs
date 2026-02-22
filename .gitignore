@@ -4,4 +4,9 @@
 
 
 .venv
+.vscode
 
+__pycache__
+*.pyc
+
+ai-models/
