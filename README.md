@@ -86,9 +86,6 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-<<<<<<< Updated upstream
-### 4. Verify installation
-=======
 ### 4. Add the HDFS dataset files
 
 Place the following files inside `data/HDFS/`:
@@ -102,7 +99,6 @@ The HDFS_1 dataset is publicly available from the [LogPAI loghub repository](htt
 
 ### 5. Create the model output directory
 
->>>>>>> Stashed changes
 ```bash
 mkdir ai-models
 ```
