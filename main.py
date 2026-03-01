@@ -12,7 +12,8 @@ from models.classifier import LogClassifier
 from training.pretrain import pretrain
 from training.finetune import finetune
 from retrieval.knn_index import build_index
-from services.logger import get_logger
+from services import get_logger
+from services import hugging_face_service
 
 log = get_logger(__name__)
 
@@ -31,7 +32,13 @@ def main():
         max_len=cfg.MAX_LEN,
         num_pairs=cfg.PRETRAIN_PAIRS,
     )
-    pretrain_loader = DataLoader(pretrain_ds, batch_size=cfg.BATCH_SIZE, shuffle=True)
+    pretrain_loader = DataLoader(
+        pretrain_ds,
+        batch_size=cfg.BATCH_SIZE,
+        shuffle=True,
+        num_workers=2,
+        pin_memory=(cfg.DEVICE == "cuda"),
+    )
     log.info("[Data] Pre-train pairs: %d", len(pretrain_ds))
 
     log.info("[Data] Loading fine-tuning dataset...")
@@ -41,7 +48,13 @@ def main():
         max_len=cfg.MAX_LEN,
         label_path=cfg.LABEL_PATH,
     )
-    finetune_loader = DataLoader(finetune_ds, batch_size=cfg.BATCH_SIZE, shuffle=True)
+    finetune_loader = DataLoader(
+        finetune_ds,
+        batch_size=cfg.BATCH_SIZE,
+        shuffle=True,
+        num_workers=2,
+        pin_memory=(cfg.DEVICE == "cuda"),
+    )
     log.info("[Data] Fine-tune samples: %d", len(finetune_ds))
 
     # ── 2. Pre-training ───────────────────────────────────────────
@@ -100,6 +113,9 @@ def main():
         device=cfg.DEVICE,
         save_dir=cfg.SAVE_DIR,
     )
+
+    # ── 6. Push models to Hugging Face ────────────────────────────
+    hugging_face_service.push_model()
 
     log.info("Pipeline complete.")
 

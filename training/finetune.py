@@ -1,4 +1,4 @@
-# training/finetune.py
+import torch
 import torch.nn.functional as F
 from tqdm import tqdm
 from services.logger import get_logger
@@ -10,6 +10,7 @@ def finetune(model, dataloader, optimizer, device="cpu", num_epochs=2):
     model.train()
     final_loss = 0.0
     total_batches = len(dataloader)
+    loss_weights = torch.tensor([dataloader.dataset.NORMAL_COUNT/dataloader.dataset.ANOMALY_COUNT]).to(device)
 
     for epoch in range(1, num_epochs + 1):
         total_loss = 0.0
@@ -27,7 +28,7 @@ def finetune(model, dataloader, optimizer, device="cpu", num_epochs=2):
             )
 
             logits = model(input_ids, mask)
-            loss = F.binary_cross_entropy_with_logits(logits, labels.float())
+            loss = F.binary_cross_entropy_with_logits(logits, labels.float(),pos_weight=loss_weights)
 
             optimizer.zero_grad()
             loss.backward()

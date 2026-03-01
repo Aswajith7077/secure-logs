@@ -2,6 +2,7 @@
 from tqdm import tqdm
 from utils.loss import joint_loss
 from services.logger import get_logger
+import torch
 
 log = get_logger(__name__)
 
@@ -10,6 +11,7 @@ def pretrain(model, dataloader, optimizer, device="cpu", num_epochs=2):
     model.train()
     final_loss = 0.0
     total_batches = len(dataloader)
+    pos_weights = torch.tensor([1,dataloader.dataset.NORMAL_COUNT/dataloader.dataset.ANOMALY_COUNT]).to(device)
 
     for epoch in range(1, num_epochs + 1):
         total_loss = 0.0
@@ -26,7 +28,7 @@ def pretrain(model, dataloader, optimizer, device="cpu", num_epochs=2):
             labels = labels.to(device)
 
             logits, z1, z2 = model(batch_a, batch_b)
-            loss = joint_loss(logits, labels, z1, z2)
+            loss = joint_loss(logits, labels, z1, z2, pos_weights)
 
             optimizer.zero_grad()
             loss.backward()

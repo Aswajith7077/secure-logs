@@ -44,9 +44,8 @@ KNN_K = 10  # neighbours to retrieve
 NOVEL_SIGMA = 2.0  # how many std-devs above mean → "novel"
 NOVEL_THRESH = 1.0  # hard-coded fallback when KNN index is empty
 
-RESULT_DIR = "result"
-VIZ_DIR = os.path.join(RESULT_DIR, "visualizations")
-METRICS_FILE = os.path.join(RESULT_DIR, "metrics.txt")
+VIZ_DIR = os.path.join(cfg.PREDICT_DIR, "visualizations")
+METRICS_FILE = os.path.join(cfg.PREDICT_DIR, "metrics.txt")
 
 
 # ── Model loading ──────────────────────────────────────────────────
@@ -254,7 +253,7 @@ def main():
     log.info("\n%s", report)
 
     # ── Save metrics.txt ───────────────────────────────────────────
-    os.makedirs(RESULT_DIR, exist_ok=True)
+    os.makedirs(cfg.PREDICT_DIR, exist_ok=True)
     with open(METRICS_FILE, "w", encoding="utf-8") as f:
         f.write(report)
     log.info("Metrics saved → %s", METRICS_FILE)

@@ -4,6 +4,7 @@ import random
 import pandas as pd
 import torch
 from torch.utils.data import Dataset
+from tqdm import tqdm
 from transformers import BertTokenizer
 
 
@@ -20,7 +21,9 @@ def _build_sessions(df: pd.DataFrame):
     A block is anomalous if any of its lines has Level == WARN.
     """
     sessions = {}
-    for _, row in df.iterrows():
+    for _, row in tqdm(
+        df.iterrows(), total=len(df), desc="[Data] Parsing log rows", unit="row"
+    ):
         block_id = _extract_block_id(str(row["Content"]))
         if block_id not in sessions:
             sessions[block_id] = {"templates": [], "has_anomaly": False}
@@ -48,18 +51,49 @@ class HDFSPretrainDataset(Dataset):
         df = pd.read_csv(csv_path)
         sessions = _build_sessions(df)
         self.block_ids = list(sessions.keys())
-        self.templates = {block_id: info["templates"] for block_id, info in sessions.items()}
+        self.templates = {
+            block_id: info["templates"] for block_id, info in sessions.items()
+        }
         self.tokenizer = BertTokenizer.from_pretrained(tokenizer_name)
         self.max_len = max_len
 
         # Pre-generate pairs at construction time for reproducibility
         self.pairs = []
         n = num_pairs // 2
-        # Positive pairs
         self.__pair_positives(n)
-        self.__pair_negatives(n,sessions)        
+        self.__pair_negatives(n, sessions)
 
-    def __pair_positives(self,n):
+        self.__label_distribution(sessions)
+
+        # Pre-tokenize all pairs once so __getitem__ never calls the tokenizer.
+        # This trades a one-time upfront cost for much faster DataLoader iteration.
+        self._cached = [
+            (*self._tokenize(seq_a), *self._tokenize(seq_b), label)
+            for seq_a, seq_b, label in tqdm(
+                self.pairs,
+                desc="[Pretrain] Tokenizing pairs",
+                unit="pair",
+            )
+        ]
+
+    def __label_distribution(self,sessions):
+
+        self.NORMAL_COUNT = 0
+        self.ANOMALY_COUNT = 0
+
+        for block_id in self.block_ids:
+            # print(self.templates)
+            if sessions[block_id]["has_anomaly"]:
+                self.ANOMALY_COUNT += 1
+            else:
+                self.NORMAL_COUNT += 1
+
+        print("[Pretrain] The number of normal logs is ", self.NORMAL_COUNT)
+        print("[Pretrain] The number of anomaly logs is ", self.ANOMALY_COUNT)
+        print("[Pretrain] The number of total logs is ", len(self.block_ids))
+
+
+    def __pair_positives(self, n):
         for _ in range(n):
             block_id = random.choice(self.block_ids)
             tmpl = self.templates[block_id]
@@ -67,11 +101,15 @@ class HDFSPretrainDataset(Dataset):
             seq_b = self._sample_seq(tmpl)
             self.pairs.append((seq_a, seq_b, 0))
 
-    def __pair_negatives(self,n,sessions):
+    def __pair_negatives(self, n, sessions):
 
         # This is to pair each dissimilar pair with 1
-        normal_blocks = [block_id for block_id, info in sessions.items() if not info["has_anomaly"]]
-        anomaly_blocks = [block_id for block_id, info in sessions.items() if info["has_anomaly"]]
+        normal_blocks = [
+            block_id for block_id, info in sessions.items() if not info["has_anomaly"]
+        ]
+        anomaly_blocks = [
+            block_id for block_id, info in sessions.items() if info["has_anomaly"]
+        ]
 
         for _ in range(n):
             block_id_a = random.choice(normal_blocks)
@@ -99,9 +137,7 @@ class HDFSPretrainDataset(Dataset):
         return len(self.pairs)
 
     def __getitem__(self, idx):
-        seq_a, seq_b, label = self.pairs[idx]
-        ids_a, mask_a = self._tokenize(seq_a)
-        ids_b, mask_b = self._tokenize(seq_b)
+        ids_a, mask_a, ids_b, mask_b, label = self._cached[idx]
         return (ids_a, mask_a), (ids_b, mask_b), torch.tensor(label, dtype=torch.long)
 
 
@@ -128,11 +164,11 @@ class HDFSFinetuneDataset(Dataset):
         self.tokenizer = BertTokenizer.from_pretrained(tokenizer_name)
         self.max_len = max_len
 
-        label_map,use_heuristic = self.__handle_label(label_path)
+        label_map, use_heuristic = self.__handle_label(label_path)
 
         # ── Build samples ──────────────────────────────────────────
         self.samples = []
-        self.__build_samples(sessions,label_map,use_heuristic)
+        self.__build_samples(sessions, label_map, use_heuristic)
 
         # Label distribution summary
         n_anomaly = sum(1 for _, lbl in self.samples if lbl == 1)
@@ -141,7 +177,14 @@ class HDFSFinetuneDataset(Dataset):
             f"[Finetune] Label distribution — Normal: {n_normal}, Anomaly: {n_anomaly}"
         )
 
-    def __handle_label(self,label_path):
+        self.NORMAL_COUNT = n_normal
+        self.ANOMALY_COUNT = n_anomaly
+
+        print("[Finetune] The number of normal logs is ", self.NORMAL_COUNT)
+        print("[Finetune] The number of anomaly logs is ", self.ANOMALY_COUNT)
+        print("[Finetune] The number of total logs is ", len(self.samples))
+
+    def __handle_label(self, label_path):
 
         if label_path is not None:
             label_df = pd.read_csv(label_path)
@@ -160,9 +203,9 @@ class HDFSFinetuneDataset(Dataset):
                 "[Warning] No label_path provided — using WARN-level heuristic for labels."
             )
 
-        return label_map,use_heuristic
+        return label_map, use_heuristic
 
-    def __build_samples(self,sessions,label_map,use_heuristic):
+    def __build_samples(self, sessions, label_map, use_heuristic):
         skipped = 0
         for block_id, info in sessions.items():
             text = " [SEP] ".join(info["templates"])
