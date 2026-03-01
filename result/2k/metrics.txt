@@ -16,13 +16,13 @@
   Normals   (GT) : 1926
 
 📈 Classification Metrics
-  Accuracy   : 0.9669
-  Precision  : 1.0000
-  Recall     : 0.0294
-  F1-Score   : 0.0571
-  MCC        : 0.1686
-  FPR        : 0.0000
-  FNR        : 0.9706
+  Accuracy   : 0.9664
+  Precision  : 0.5714
+  Recall     : 0.0588
+  F1-Score   : 0.1067
+  MCC        : 0.1757
+  FPR        : 0.0016
+  FNR        : 0.9412
 
 📉 Curve-based Metrics
   ROC-AUC    : 0.6074
@@ -30,8 +30,8 @@
 
 🔲 Confusion Matrix  (rows=GT, cols=Pred)
              Pred=Normal  Pred=Anomaly
-  GT=Normal         1926             0
-  GT=Anomaly          66             2
+  GT=Normal         1923             3
+  GT=Anomaly          64             4
 
 🆕 KNN-RAG: Novel Log Category Detection
   Novel sessions : 5

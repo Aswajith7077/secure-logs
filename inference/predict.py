@@ -31,6 +31,7 @@ from retrieval.knn_index import KNNRetriever
 from utils.metrics import compute_metrics, format_metrics_report
 from utils.visualizations import generate_all
 from services.logger import get_logger
+from utils.optimal_threshold import optimal_threshold
 
 log = get_logger(__name__)
 
@@ -149,6 +150,9 @@ def run_inference(
 
     log.info("[Predict] Running inference on %d sessions …", len(dataloader.dataset))
 
+    # threshold = dataloader.dataset.ANOMALY_COUNT / (dataloader.dataset.ANOMALY_COUNT + dataloader.dataset.NORMAL_COUNT)
+    # log.info("[Predict] Using threshold: %.4f", threshold)
+
     with torch.no_grad():
         for batch_idx, (input_ids, attention_mask, labels) in enumerate(dataloader):
             input_ids = input_ids.to(device)
@@ -180,7 +184,10 @@ def run_inference(
 
                 # ── Hybrid decision ────────────────────────────────
                 final_score = BETA * p_model + (1 - BETA) * p_knn
-                predicted = int(final_score > 0.5)
+                # threshold = optimal_threshold(y_true, y_score)
+
+                # Arrived using PR-curve optimal threshold
+                predicted = int(final_score > 0.475853842187741)
 
                 gt = int(labels[i].item())
                 y_true.append(gt)
@@ -244,6 +251,14 @@ def main():
     y_true, y_pred, y_score, prob_model, prob_knn, novel_flags = run_inference(
         classifier, retriever, loader, cfg.DEVICE, novel_thresh=novel_thresh
     )
+
+    # ── Calibrate decision threshold via PR curve (post-inference) ──
+    # optimal_threshold needs the FULL score list — must be called here,
+    # not inside the per-sample loop where y_true/y_score are still empty.
+    best_threshold = optimal_threshold(y_true, y_score)
+    log.info("[Threshold] PR-curve optimal threshold → %.4f", best_threshold)
+    model_info["decision_threshold"] = round(float(best_threshold), 4)
+    y_pred = [int(s >= best_threshold) for s in y_score]
 
     # ── Compute metrics ────────────────────────────────────────────
     log.info("[Metrics] Computing evaluation metrics …")
