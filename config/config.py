@@ -1,10 +1,10 @@
 # config/config.py
+import pandas as pd
 import torch
 from dotenv import dotenv_values
 
 
 class ConfigService:
-
     CATEGORIES = ["2K", "100K", "FULL"]
 
     # Keys that have CPU_/GPU_ variants in the .env files
@@ -46,6 +46,21 @@ class ConfigService:
                     except ValueError:
                         value = raw
                 object.__setattr__(self, key, value)
+
+    #     self.__label_distribution()
+
+    # def __label_distribution(self):
+    #     label_df = pd.read_csv(self._envs["LABEL_PATH"])
+    #     train_normal = (label_df["Label"] == "Normal").sum()
+    #     train_anomaly = (label_df["Label"] == "Anomaly").sum()
+
+    #     print("The number of normal logs is ", train_normal)
+    #     print("The number of anomaly logs is ", train_anomaly)
+
+    #     self.NORMAL_COUNT = train_normal
+    #     self.ANOMALY_COUNT = train_anomaly
+    #     self.POS_WEIGHT = train_normal / train_anomaly
+
 
     def __getattr__(self, name: str):
         # Called only when normal attribute lookup fails

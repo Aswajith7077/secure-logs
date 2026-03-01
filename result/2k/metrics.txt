@@ -8,7 +8,7 @@
   KNN index  : ai-models/2k-dataset
   Beta (β)   : 0.68
   KNN-k      : 10
-  Novel thresh: 1.1103
+  Novel thresh: 0.426
 
 📊 Dataset
   Total sessions : 1994
@@ -16,29 +16,29 @@
   Normals   (GT) : 1926
 
 📈 Classification Metrics
-  Accuracy   : 0.9659
-  Precision  : 0.0000
-  Recall     : 0.0000
-  F1-Score   : 0.0000
-  MCC        : 0.0000
+  Accuracy   : 0.9669
+  Precision  : 1.0000
+  Recall     : 0.0294
+  F1-Score   : 0.0571
+  MCC        : 0.1686
   FPR        : 0.0000
-  FNR        : 1.0000
+  FNR        : 0.9706
 
 📉 Curve-based Metrics
-  ROC-AUC    : 0.5008
-  PR-AUC     : 0.0763
+  ROC-AUC    : 0.6074
+  PR-AUC     : 0.0869
 
 🔲 Confusion Matrix  (rows=GT, cols=Pred)
              Pred=Normal  Pred=Anomaly
   GT=Normal         1926             0
-  GT=Anomaly          68             0
+  GT=Anomaly          66             2
 
 🆕 KNN-RAG: Novel Log Category Detection
-  Novel sessions : 8
-    ↳ Anomaly    : 3
-    ↳ Normal     : 5
-  Known sessions : 1986
-    ↳ Anomaly    : 65
-    ↳ Normal     : 1921
+  Novel sessions : 5
+    ↳ Anomaly    : 2
+    ↳ Normal     : 3
+  Known sessions : 1989
+    ↳ Anomaly    : 66
+    ↳ Normal     : 1923
 
 ============================================================
