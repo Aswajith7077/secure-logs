@@ -852,3 +852,110 @@
 2026-03-01 17:31:15 | INFO     | logsentry.__main__ |   Metrics  : result/2k\metrics.txt
 2026-03-01 17:31:15 | INFO     | logsentry.__main__ |   Plots    : result/2k\visualizations/
 2026-03-01 17:31:15 | INFO     | logsentry.__main__ | ============================================================
+2026-03-01 17:46:28 | INFO     | logsentry.__main__ | ============================================================
+2026-03-01 17:46:28 | INFO     | logsentry.__main__ |   LogSentry — Training Pipeline
+2026-03-01 17:46:28 | INFO     | logsentry.__main__ | ============================================================
+2026-03-01 17:46:28 | INFO     | logsentry.__main__ | Device: cuda
+2026-03-01 17:46:28 | INFO     | logsentry.__main__ | [Data] Loading pre-training dataset...
+2026-03-01 17:46:56 | INFO     | logsentry.__main__ | [Data] Pre-train pairs: 10000
+2026-03-01 17:46:56 | INFO     | logsentry.__main__ | [Data] Loading fine-tuning dataset...
+2026-03-01 17:48:01 | INFO     | logsentry.__main__ | [Data] Fine-tune samples: 7940
+2026-03-01 17:48:01 | INFO     | logsentry.__main__ | [Pretrain] Starting contrastive pre-training...
+2026-03-01 17:48:03 | INFO     | logsentry.__main__ | [Pretrain] Trainable params: 3,074 (BERT frozen)
+2026-03-01 18:20:58 | INFO     | logsentry.training.pretrain | [Pretrain] Epoch 1/10 — Avg Loss: 3.7827
+2026-03-01 18:45:14 | INFO     | logsentry.training.pretrain | [Pretrain] Epoch 2/10 — Avg Loss: 3.5447
+2026-03-01 19:08:12 | INFO     | logsentry.training.pretrain | [Pretrain] Epoch 3/10 — Avg Loss: 3.5035
+2026-03-01 19:30:04 | INFO     | logsentry.training.pretrain | [Pretrain] Epoch 4/10 — Avg Loss: 3.4891
+2026-03-01 19:43:54 | INFO     | logsentry.training.pretrain | [Pretrain] Epoch 5/10 — Avg Loss: 3.4813
+2026-03-01 19:58:36 | INFO     | logsentry.training.pretrain | [Pretrain] Epoch 6/10 — Avg Loss: 3.4785
+2026-03-01 20:15:44 | INFO     | logsentry.training.pretrain | [Pretrain] Epoch 7/10 — Avg Loss: 3.4755
+2026-03-01 20:55:48 | INFO     | logsentry.training.pretrain | [Pretrain] Epoch 8/10 — Avg Loss: 3.4748
+2026-03-01 21:14:37 | INFO     | logsentry.training.pretrain | [Pretrain] Epoch 9/10 — Avg Loss: 3.4728
+2026-03-01 21:39:47 | INFO     | logsentry.training.pretrain | [Pretrain] Epoch 10/10 — Avg Loss: 3.4729
+2026-03-01 21:39:47 | INFO     | logsentry.__main__ | [Finetune] Starting supervised fine-tuning...
+2026-03-01 21:39:47 | INFO     | logsentry.__main__ | [Finetune] Trainable params: 591,361 (BERT frozen)
+2026-03-01 21:50:50 | INFO     | logsentry.training.finetune | [Finetune] Epoch 1/10 — Avg Loss: 1.3073
+2026-03-01 22:02:25 | INFO     | logsentry.training.finetune | [Finetune] Epoch 2/10 — Avg Loss: 1.2788
+2026-03-01 22:12:42 | INFO     | logsentry.training.finetune | [Finetune] Epoch 3/10 — Avg Loss: 1.2230
+2026-03-01 22:21:25 | INFO     | logsentry.training.finetune | [Finetune] Epoch 4/10 — Avg Loss: 1.1908
+2026-03-01 22:30:15 | INFO     | logsentry.training.finetune | [Finetune] Epoch 5/10 — Avg Loss: 1.1600
+2026-03-01 22:38:51 | INFO     | logsentry.training.finetune | [Finetune] Epoch 6/10 — Avg Loss: 1.1386
+2026-03-01 22:48:27 | INFO     | logsentry.training.finetune | [Finetune] Epoch 7/10 — Avg Loss: 1.1257
+2026-03-01 22:58:17 | INFO     | logsentry.training.finetune | [Finetune] Epoch 8/10 — Avg Loss: 1.1097
+2026-03-01 23:07:46 | INFO     | logsentry.training.finetune | [Finetune] Epoch 9/10 — Avg Loss: 1.1181
+2026-03-01 23:18:06 | INFO     | logsentry.training.finetune | [Finetune] Epoch 10/10 — Avg Loss: 1.0941
+2026-03-01 23:18:08 | INFO     | logsentry.__main__ | Saved encoder    → ai-models/100k-dataset\bert_encoder.pt
+2026-03-01 23:18:08 | INFO     | logsentry.__main__ | Saved classifier → ai-models/100k-dataset\log_classifier.pt
+2026-03-01 23:29:14 | INFO     | logsentry.services.hugging_face | Initialize Pushing model to Hugging Face
+2026-03-01 23:29:29 | INFO     | logsentry.services.hugging_face | Model pushed to Hugging Face
+2026-03-01 23:29:29 | INFO     | logsentry.__main__ | Pipeline complete.
+2026-03-01 23:31:57 | INFO     | logsentry.__main__ | ============================================================
+2026-03-01 23:31:57 | INFO     | logsentry.__main__ |   LogSentry — Prediction & Evaluation
+2026-03-01 23:31:57 | INFO     | logsentry.__main__ | ============================================================
+2026-03-01 23:31:57 | INFO     | logsentry.__main__ | Device : cuda
+2026-03-01 23:31:57 | INFO     | logsentry.__main__ | [Data] Loading HDFSFinetuneDataset …
+2026-03-01 23:33:07 | INFO     | logsentry.__main__ | [Data] 7940 sessions loaded.
+2026-03-01 23:33:07 | INFO     | logsentry.__main__ | [Load] Encoder -> ai-models/100k-dataset\bert_encoder.pt
+2026-03-01 23:33:11 | INFO     | logsentry.__main__ | [Load] Classifier -> ai-models/100k-dataset\log_classifier.pt
+2026-03-01 23:33:11 | INFO     | logsentry.__main__ | [Load] KNN index -> ai-models/100k-dataset/knn.index
+2026-03-01 23:33:11 | INFO     | logsentry.__main__ | [Calibrate] Computing KNN distance distribution for novel threshold
+2026-03-01 23:40:28 | INFO     | logsentry.__main__ | [Calibrate] NN-dist  mean=0.0046  std=0.0778  ->  novel_thresh=0.1602  (mean + 2.0σ)
+2026-03-01 23:40:28 | INFO     | logsentry.__main__ | [Predict] Running inference on 7940 sessions …
+2026-03-01 23:45:48 | DEBUG    | logsentry.__main__ | [Predict] Processed 1600 / 7940 sessions
+2026-03-01 23:47:48 | DEBUG    | logsentry.__main__ | [Predict] Processed 3200 / 7940 sessions
+2026-03-01 23:51:02 | DEBUG    | logsentry.__main__ | [Predict] Processed 4800 / 7940 sessions
+2026-03-01 23:54:10 | DEBUG    | logsentry.__main__ | [Predict] Processed 6400 / 7940 sessions
+2026-03-01 23:57:07 | INFO     | logsentry.__main__ | [Threshold] PR-curve optimal threshold → 0.4283
+2026-03-01 23:57:07 | INFO     | logsentry.__main__ | [Metrics] Computing evaluation metrics …
+2026-03-01 23:57:07 | INFO     | logsentry.__main__ | 
+============================================================
+  LogSentry — Anomaly Detection Evaluation Report
+============================================================
+
+📁 Model Artefacts
+  Encoder    : ai-models/100k-dataset\bert_encoder.pt
+  Classifier : ai-models/100k-dataset\log_classifier.pt
+  KNN index  : ai-models/100k-dataset
+  Beta (β)   : 0.68
+  KNN-k      : 10
+  Novel thresh: 0.1602
+
+📊 Dataset
+  Total sessions : 7940
+  Anomalies (GT) : 313
+  Normals   (GT) : 7627
+
+📈 Classification Metrics
+  Accuracy   : 0.9773
+  Precision  : 0.9854
+  Recall     : 0.4313
+  F1-Score   : 0.6000
+  MCC        : 0.6441
+  FPR        : 0.0003
+  FNR        : 0.5687
+
+📉 Curve-based Metrics
+  ROC-AUC    : 0.7177
+  PR-AUC     : 0.4818
+
+🔲 Confusion Matrix  (rows=GT, cols=Pred)
+             Pred=Normal  Pred=Anomaly
+  GT=Normal         7625             2
+  GT=Anomaly         178           135
+
+🆕 KNN-RAG: Novel Log Category Detection
+  Novel sessions : 25
+    ↳ Anomaly    : 8
+    ↳ Normal     : 17
+  Known sessions : 7915
+    ↳ Anomaly    : 305
+    ↳ Normal     : 7610
+
+============================================================
+2026-03-01 23:57:07 | INFO     | logsentry.__main__ | Metrics saved → result/100k\metrics.txt
+2026-03-01 23:57:07 | INFO     | logsentry.__main__ | [Visualizations] Generating plots → result/100k\visualizations
+2026-03-01 23:57:09 | INFO     | logsentry.__main__ | ============================================================
+2026-03-01 23:57:09 | INFO     | logsentry.__main__ |   Evaluation complete.
+2026-03-01 23:57:09 | INFO     | logsentry.__main__ |   Metrics  : result/100k\metrics.txt
+2026-03-01 23:57:09 | INFO     | logsentry.__main__ |   Plots    : result/100k\visualizations/
+2026-03-01 23:57:09 | INFO     | logsentry.__main__ | ============================================================

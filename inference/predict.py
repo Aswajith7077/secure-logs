@@ -21,6 +21,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import numpy as np
 import torch
+from tqdm import tqdm
 from torch.utils.data import DataLoader
 
 from config import config_service as cfg
@@ -154,7 +155,13 @@ def run_inference(
     # log.info("[Predict] Using threshold: %.4f", threshold)
 
     with torch.no_grad():
-        for batch_idx, (input_ids, attention_mask, labels) in enumerate(dataloader):
+        pbar = tqdm(
+            dataloader,
+            desc="[Predict] Inference",
+            unit="batch",
+            total=len(dataloader),
+        )
+        for batch_idx, (input_ids, attention_mask, labels) in enumerate(pbar):
             input_ids = input_ids.to(device)
             attention_mask = attention_mask.to(device)
 
