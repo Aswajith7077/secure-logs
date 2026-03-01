@@ -1,0 +1,128 @@
+2026-03-01 00:17:33 | INFO     | logsentry.__main__ | ============================================================
+2026-03-01 00:17:33 | INFO     | logsentry.__main__ |   LogSentry — Training Pipeline
+2026-03-01 00:17:33 | INFO     | logsentry.__main__ | ============================================================
+2026-03-01 00:17:33 | INFO     | logsentry.__main__ | Device: cpu
+2026-03-01 00:17:33 | INFO     | logsentry.__main__ | [Data] Loading pre-training dataset...
+2026-03-01 00:17:37 | INFO     | logsentry.__main__ | [Data] Pre-train pairs: 200
+2026-03-01 00:17:37 | INFO     | logsentry.__main__ | [Data] Loading fine-tuning dataset...
+2026-03-01 00:18:34 | INFO     | logsentry.__main__ | ============================================================
+2026-03-01 00:18:34 | INFO     | logsentry.__main__ |   LogSentry — Training Pipeline
+2026-03-01 00:18:34 | INFO     | logsentry.__main__ | ============================================================
+2026-03-01 00:18:34 | INFO     | logsentry.__main__ | Device: cpu
+2026-03-01 00:18:34 | INFO     | logsentry.__main__ | [Data] Loading pre-training dataset...
+2026-03-01 00:18:37 | INFO     | logsentry.__main__ | [Data] Pre-train pairs: 200
+2026-03-01 00:18:37 | INFO     | logsentry.__main__ | [Data] Loading fine-tuning dataset...
+2026-03-01 00:19:25 | INFO     | logsentry.__main__ | [Data] Fine-tune samples: 1994
+2026-03-01 00:19:25 | INFO     | logsentry.__main__ | [Pretrain] Starting contrastive pre-training...
+2026-03-01 00:19:27 | INFO     | logsentry.__main__ | [Pretrain] Trainable params: 3,074 (BERT frozen)
+2026-03-01 08:45:48 | INFO     | logsentry.__main__ | ============================================================
+2026-03-01 08:45:48 | INFO     | logsentry.__main__ |   LogSentry — Training Pipeline
+2026-03-01 08:45:48 | INFO     | logsentry.__main__ | ============================================================
+2026-03-01 08:45:48 | INFO     | logsentry.__main__ | Device: cpu
+2026-03-01 08:45:48 | INFO     | logsentry.__main__ | [Data] Loading pre-training dataset...
+2026-03-01 08:45:51 | INFO     | logsentry.__main__ | [Data] Pre-train pairs: 200
+2026-03-01 08:45:51 | INFO     | logsentry.__main__ | [Data] Loading fine-tuning dataset...
+2026-03-01 08:46:41 | INFO     | logsentry.__main__ | [Data] Fine-tune samples: 1994
+2026-03-01 08:46:41 | INFO     | logsentry.__main__ | [Pretrain] Starting contrastive pre-training...
+2026-03-01 08:46:42 | INFO     | logsentry.__main__ | [Pretrain] Trainable params: 3,074 (BERT frozen)
+2026-03-01 08:47:20 | INFO     | logsentry.training.pretrain | [Pretrain] Epoch 1/1 — Loss: 3.0558
+2026-03-01 08:47:20 | INFO     | logsentry.__main__ | [Finetune] Starting supervised fine-tuning...
+2026-03-01 08:47:20 | INFO     | logsentry.__main__ | [Finetune] Trainable params: 591,361 (BERT frozen)
+2026-03-01 08:50:42 | INFO     | logsentry.training.finetune | [Finetune] Epoch 1/1 — Loss: 0.2949
+2026-03-01 08:50:43 | INFO     | logsentry.__main__ | Saved encoder    → ai-models\bert_encoder.pt
+2026-03-01 08:50:43 | INFO     | logsentry.__main__ | Saved classifier → ai-models\log_classifier.pt
+2026-03-01 08:52:49 | INFO     | logsentry.__main__ | Pipeline complete.
+2026-03-01 09:14:06 | INFO     | logsentry.__main__ | ============================================================
+2026-03-01 09:14:06 | INFO     | logsentry.__main__ |   LogSentry — Prediction & Evaluation
+2026-03-01 09:14:06 | INFO     | logsentry.__main__ | ============================================================
+2026-03-01 09:14:06 | INFO     | logsentry.__main__ | Device : cpu
+2026-03-01 09:14:06 | INFO     | logsentry.__main__ | [Data] Loading HDFSFinetuneDataset …
+2026-03-01 09:14:55 | INFO     | logsentry.__main__ | [Data] 1994 sessions loaded.
+2026-03-01 09:14:55 | INFO     | logsentry.__main__ | [Load] Encoder -> ai-models\bert_encoder.pt
+2026-03-01 09:14:56 | INFO     | logsentry.__main__ | [Load] Classifier -> ai-models\log_classifier.pt
+2026-03-01 09:14:56 | INFO     | logsentry.__main__ | [Load] KNN index -> ai-models/knn.index
+2026-03-01 09:14:56 | INFO     | logsentry.__main__ | [Calibrate] Computing KNN distance distribution for novel threshold
+2026-03-01 09:18:50 | INFO     | logsentry.__main__ | [Calibrate] NN-dist  mean=0.0207  std=0.3464  ->  novel_thresh=0.7135  (mean + 2.0σ)
+2026-03-01 09:18:50 | INFO     | logsentry.__main__ | [Predict] Running inference on 1994 sessions …
+2026-03-01 09:21:46 | DEBUG    | logsentry.__main__ | [Predict] Processed 800 / 1994 sessions
+2026-03-01 09:24:57 | DEBUG    | logsentry.__main__ | [Predict] Processed 1600 / 1994 sessions
+2026-03-01 09:26:24 | INFO     | logsentry.__main__ | [Metrics] Computing evaluation metrics …
+2026-03-01 09:26:24 | INFO     | logsentry.__main__ | 
+============================================================
+  LogSentry — Anomaly Detection Evaluation Report
+============================================================
+
+📁 Model Artefacts
+  Encoder    : ai-models\bert_encoder.pt
+  Classifier : ai-models\log_classifier.pt
+  KNN index  : ai-models
+  Beta (β)   : 0.68
+  KNN-k      : 10
+  Novel thresh: 0.7135
+
+📊 Dataset
+  Total sessions : 1994
+  Anomalies (GT) : 68
+  Normals   (GT) : 1926
+
+📈 Classification Metrics
+  Accuracy   : 0.9659
+  Precision  : 0.0000
+  Recall     : 0.0000
+  F1-Score   : 0.0000
+  MCC        : 0.0000
+  FPR        : 0.0000
+  FNR        : 1.0000
+
+📉 Curve-based Metrics
+  ROC-AUC    : 0.5655
+  PR-AUC     : 0.0795
+
+🔲 Confusion Matrix  (rows=GT, cols=Pred)
+             Pred=Normal  Pred=Anomaly
+  GT=Normal         1926             0
+  GT=Anomaly          68             0
+
+🆕 KNN-RAG: Novel Log Category Detection
+  Novel sessions : 8
+    ↳ Anomaly    : 3
+    ↳ Normal     : 5
+  Known sessions : 1986
+    ↳ Anomaly    : 65
+    ↳ Normal     : 1921
+
+============================================================
+2026-03-01 09:26:24 | INFO     | logsentry.__main__ | Metrics saved → result\metrics.txt
+2026-03-01 09:26:24 | INFO     | logsentry.__main__ | [Visualizations] Generating plots → result\visualizations
+2026-03-01 09:26:26 | INFO     | logsentry.__main__ | ============================================================
+2026-03-01 09:26:26 | INFO     | logsentry.__main__ |   Evaluation complete.
+2026-03-01 09:26:26 | INFO     | logsentry.__main__ |   Metrics  : result\metrics.txt
+2026-03-01 09:26:26 | INFO     | logsentry.__main__ |   Plots    : result\visualizations/
+2026-03-01 09:26:26 | INFO     | logsentry.__main__ | ============================================================
+2026-03-01 12:55:08 | INFO     | logsentry.__main__ | ============================================================
+2026-03-01 12:55:08 | INFO     | logsentry.__main__ |   LogSentry — Prediction & Evaluation
+2026-03-01 12:55:08 | INFO     | logsentry.__main__ | ============================================================
+2026-03-01 12:55:08 | INFO     | logsentry.__main__ | Device : cuda
+2026-03-01 12:55:08 | INFO     | logsentry.__main__ | [Data] Loading HDFSFinetuneDataset …
+2026-03-01 12:56:05 | INFO     | logsentry.__main__ | [Data] 7940 sessions loaded.
+2026-03-01 12:56:05 | INFO     | logsentry.__main__ | [Load] Encoder -> ai-models/100k-dataset\bert_encoder.pt
+2026-03-01 12:57:14 | INFO     | logsentry.__main__ | ============================================================
+2026-03-01 12:57:14 | INFO     | logsentry.__main__ |   LogSentry — Training Pipeline
+2026-03-01 12:57:14 | INFO     | logsentry.__main__ | ============================================================
+2026-03-01 12:57:14 | INFO     | logsentry.__main__ | Device: cuda
+2026-03-01 12:57:14 | INFO     | logsentry.__main__ | [Data] Loading pre-training dataset...
+2026-03-01 12:57:23 | INFO     | logsentry.__main__ | [Data] Pre-train pairs: 10000
+2026-03-01 12:57:23 | INFO     | logsentry.__main__ | [Data] Loading fine-tuning dataset...
+2026-03-01 12:58:14 | INFO     | logsentry.__main__ | [Data] Fine-tune samples: 7940
+2026-03-01 12:58:14 | INFO     | logsentry.__main__ | [Pretrain] Starting contrastive pre-training...
+2026-03-01 12:58:16 | INFO     | logsentry.__main__ | [Pretrain] Trainable params: 3,074 (BERT frozen)
+2026-03-01 13:06:42 | INFO     | logsentry.__main__ | ============================================================
+2026-03-01 13:06:42 | INFO     | logsentry.__main__ |   LogSentry — Training Pipeline
+2026-03-01 13:06:42 | INFO     | logsentry.__main__ | ============================================================
+2026-03-01 13:06:42 | INFO     | logsentry.__main__ | Device: cuda
+2026-03-01 13:06:42 | INFO     | logsentry.__main__ | [Data] Loading pre-training dataset...
+2026-03-01 13:06:52 | INFO     | logsentry.__main__ | [Data] Pre-train pairs: 10000
+2026-03-01 13:06:52 | INFO     | logsentry.__main__ | [Data] Loading fine-tuning dataset...
+2026-03-01 13:07:51 | INFO     | logsentry.__main__ | [Data] Fine-tune samples: 7940
+2026-03-01 13:07:51 | INFO     | logsentry.__main__ | [Pretrain] Starting contrastive pre-training...
+2026-03-01 13:07:52 | INFO     | logsentry.__main__ | [Pretrain] Trainable params: 3,074 (BERT frozen)

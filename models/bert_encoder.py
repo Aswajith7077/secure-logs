@@ -4,7 +4,7 @@ from transformers import BertModel
 
 
 class LogBERTEncoder(nn.Module):
-    def __init__(self, model_name="bert-base-uncased", freeze_bert=True):
+    def __init__(self, model_name="bert-base-uncased", freeze_bert=False):
         super().__init__()
         self.bert = BertModel.from_pretrained(model_name)
 
