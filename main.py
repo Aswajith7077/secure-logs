@@ -4,7 +4,7 @@ import torch
 from torch.optim import AdamW
 from torch.utils.data import DataLoader
 
-import config.config as cfg
+from config import config_service as cfg
 from data.dataset import HDFSPretrainDataset, HDFSFinetuneDataset
 from models.bert_encoder import LogBERTEncoder
 from models.contrastive_model import LogContrastiveModel
@@ -12,13 +12,19 @@ from models.classifier import LogClassifier
 from training.pretrain import pretrain
 from training.finetune import finetune
 from retrieval.knn_index import build_index
+from services.logger import get_logger
+
+log = get_logger(__name__)
 
 
 def main():
-    print(f"Device: {cfg.DEVICE}")
+    log.info("=" * 60)
+    log.info("  LogSentry — Training Pipeline")
+    log.info("=" * 60)
+    log.info("Device: %s", cfg.DEVICE)
 
     # ── 1. Data Loading ───────────────────────────────────────────
-    print("\n[Data] Loading pre-training dataset...")
+    log.info("[Data] Loading pre-training dataset...")
     pretrain_ds = HDFSPretrainDataset(
         csv_path=cfg.DATA_PATH,
         tokenizer_name=cfg.MODEL_NAME,
@@ -26,9 +32,9 @@ def main():
         num_pairs=cfg.PRETRAIN_PAIRS,
     )
     pretrain_loader = DataLoader(pretrain_ds, batch_size=cfg.BATCH_SIZE, shuffle=True)
-    print(f"[Data] Pre-train pairs: {len(pretrain_ds)}")
+    log.info("[Data] Pre-train pairs: %d", len(pretrain_ds))
 
-    print("\n[Data] Loading fine-tuning dataset...")
+    log.info("[Data] Loading fine-tuning dataset...")
     finetune_ds = HDFSFinetuneDataset(
         csv_path=cfg.DATA_PATH,
         tokenizer_name=cfg.MODEL_NAME,
@@ -36,15 +42,16 @@ def main():
         label_path=cfg.LABEL_PATH,
     )
     finetune_loader = DataLoader(finetune_ds, batch_size=cfg.BATCH_SIZE, shuffle=True)
-    print(f"[Data] Fine-tune samples: {len(finetune_ds)}")
+    log.info("[Data] Fine-tune samples: %d", len(finetune_ds))
 
     # ── 2. Pre-training ───────────────────────────────────────────
-    print("\n[Pretrain] Starting contrastive pre-training...")
+    log.info("[Pretrain] Starting contrastive pre-training...")
     encoder = LogBERTEncoder(model_name=cfg.MODEL_NAME, freeze_bert=True).to(cfg.DEVICE)
     contrastive_model = LogContrastiveModel(encoder=encoder).to(cfg.DEVICE)
     trainable = [p for p in contrastive_model.parameters() if p.requires_grad]
-    print(
-        f"[Pretrain] Trainable params: {sum(p.numel() for p in trainable):,} (BERT frozen)"
+    log.info(
+        "[Pretrain] Trainable params: %s (BERT frozen)",
+        f"{sum(p.numel() for p in trainable):,}",
     )
     pretrain_optimizer = AdamW(trainable, lr=cfg.LR)
 
@@ -57,11 +64,12 @@ def main():
     )
 
     # ── 3. Fine-tuning ────────────────────────────────────────────
-    print("\n[Finetune] Starting supervised fine-tuning...")
+    log.info("[Finetune] Starting supervised fine-tuning...")
     classifier = LogClassifier(encoder=encoder).to(cfg.DEVICE)
     trainable_ft = [p for p in classifier.parameters() if p.requires_grad]
-    print(
-        f"[Finetune] Trainable params: {sum(p.numel() for p in trainable_ft):,} (BERT frozen)"
+    log.info(
+        "[Finetune] Trainable params: %s (BERT frozen)",
+        f"{sum(p.numel() for p in trainable_ft):,}",
     )
     finetune_optimizer = AdamW(trainable_ft, lr=cfg.LR)
 
@@ -82,14 +90,10 @@ def main():
     torch.save(encoder.state_dict(), encoder_path)
     torch.save(classifier.state_dict(), classifier_path)
 
-    print(f"\n✓ Saved encoder    → {encoder_path}")
-    print(f"✓ Saved classifier → {classifier_path}")
+    log.info("Saved encoder    → %s", encoder_path)
+    log.info("Saved classifier → %s", classifier_path)
 
     # ── 5. Build FAISS KNN vector store ───────────────────────────
-    # Encode every fine-tune training session with the frozen encoder
-    # and persist the resulting embedding vectors + labels to disk.
-    # This index is used at inference time: encode a new log → find
-    # k nearest stored embeddings → weighted vote on their labels.
     build_index(
         encoder=encoder,
         dataloader=finetune_loader,
@@ -97,7 +101,7 @@ def main():
         save_dir=cfg.SAVE_DIR,
     )
 
-    print("\nPipeline complete.")
+    log.info("Pipeline complete.")
 
 
 if __name__ == "__main__":

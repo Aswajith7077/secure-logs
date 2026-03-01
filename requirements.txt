@@ -4,3 +4,7 @@ faiss-cpu
 torch
 pandas
 scikit-learn
+matplotlib
+scipy
+dotenv
+tqdm

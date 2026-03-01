@@ -1,0 +1,44 @@
+============================================================
+  LogSentry — Anomaly Detection Evaluation Report
+============================================================
+
+📁 Model Artefacts
+  Encoder    : ai-models\bert_encoder.pt
+  Classifier : ai-models\log_classifier.pt
+  KNN index  : ai-models
+  Beta (β)   : 0.68
+  KNN-k      : 10
+  Novel thresh: 0.7135
+
+📊 Dataset
+  Total sessions : 1994
+  Anomalies (GT) : 68
+  Normals   (GT) : 1926
+
+📈 Classification Metrics
+  Accuracy   : 0.9659
+  Precision  : 0.0000
+  Recall     : 0.0000
+  F1-Score   : 0.0000
+  MCC        : 0.0000
+  FPR        : 0.0000
+  FNR        : 1.0000
+
+📉 Curve-based Metrics
+  ROC-AUC    : 0.5655
+  PR-AUC     : 0.0795
+
+🔲 Confusion Matrix  (rows=GT, cols=Pred)
+             Pred=Normal  Pred=Anomaly
+  GT=Normal         1926             0
+  GT=Anomaly          68             0
+
+🆕 KNN-RAG: Novel Log Category Detection
+  Novel sessions : 8
+    ↳ Anomaly    : 3
+    ↳ Normal     : 5
+  Known sessions : 1986
+    ↳ Anomaly    : 65
+    ↳ Normal     : 1921
+
+============================================================
