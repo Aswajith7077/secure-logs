@@ -115,7 +115,7 @@ def main():
     )
 
     # ── 6. Push models to Hugging Face ────────────────────────────
-    hugging_face_service.push_model()
+    # hugging_face_service.push_model()
 
     log.info("Pipeline complete.")
 

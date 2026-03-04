@@ -5,7 +5,7 @@ from services.logger import get_logger
 log = get_logger(__name__)
 
 # (optional) Login with your Hugging Face credentials
-login()
+# login()
 
 # Push your model files
 

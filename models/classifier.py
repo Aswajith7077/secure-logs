@@ -10,6 +10,13 @@ class LogClassifier(nn.Module):
             nn.Linear(hidden_dim, hidden_dim), nn.ReLU(), nn.Linear(hidden_dim, 1)
         )
 
-    def forward(self, input_ids, attention_mask):
+    def forward(self, input_ids, attention_mask, output_attentions=False):
+        if output_attentions:
+            emb, attentions = self.encoder(
+                input_ids, attention_mask, output_attentions=True
+            )
+            logits = self.fc(emb).squeeze(-1)
+            return logits, attentions
+
         emb = self.encoder(input_ids, attention_mask)
         return self.fc(emb).squeeze(-1)
